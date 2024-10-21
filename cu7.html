@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국가유산기본법령 모의고사</title>
+    <!-- 구글 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 부트스트랩 CSS 추가 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 부트스트랩 JS 및 제이쿼리 추가 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        * {
+            font-family: "Gowun Dodum", sans-serif;
+            color: black;
+        }
+
+        /* 페이지 전체 중앙 정렬 및 80% 너비 설정 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+            /* 상단 간격 추가 */
+        }
+
+        /* 전체 컨테이너 */
+        .container {
+            width: 80%;
+            box-sizing: border-box;
+
+            /* 외곽 경계선 */
+            padding: 20px;
+            position: relative;
+            /* 문제지 박스를 기준으로 배치 */
+        }
+
+        /* 페이지 하단의 이전/다음 버튼 */
+        .footer {
+            position: absolute;
+            bottom: -60px;
+            /* 문제지 박스 외곽 경계선 아래에 위치 */
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            /* 버튼과 좌우 화면 끝 사이 간격 */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            width: auto;
+            /* 버튼의 너비가 경계선을 넘지 않게 자동으로 조정 */
+        }
+
+        /* 헤드 영역 */
+        .header {
+            width: 100%;
+            height: 80px;
+            border: 2px solid black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: rgba(220, 220, 220, 0.5);
+            /* 약한 회색 배경 */
+
+        }
+
+        .left-header {
+            padding-left: 30px;
+            /* 좌측 텍스트를 안으로 넣음 */
+        }
+
+        .right-header {
+            padding-right: 30px;
+            /* 우측 텍스트를 안으로 넣음 */
+        }
+
+
+        /* 문제 영역 */
+        .problem-area {
+            width: 100%;
+            border: 1px solid black;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* 좌우 문제 칸 */
+        .left-column,
+        .right-column {
+            width: 48%;
+            box-sizing: border-box;
+        }
+
+        /* 중앙 구분선 - 문제 영역에만 한정 */
+        .problem-area::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: black;
+        }
+
+        /* 문제 영역에 임시 배경 컬러 추가 */
+        .question {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: transparent;
+            /* 문제 내부는 흰색으로 강조 */
+
+            box-sizing: border-box;
+        }
+
+        /* 질문 텍스트 줄바꿈 설정 */
+        .question p {
+            margin: 10;
+            text-indent: -1em;
+            /* 질문 번호 바로 아래에서 시작되지 않도록 */
+            padding-left: 1em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+        }
+
+        /* 선택지 텍스트 줄바꿈 설정 */
+        .choices .choice {
+            text-indent: -1.5em;
+            /* 선택지 번호 바로 아래에서 줄이 시작되지 않도록 */
+            padding-left: 1.5em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+            margin-bottom: 5px;
+        }
+
+        /* 선택지 버튼 활성화 */
+        .choice-button {
+            width: 30px;
+            /* 선택지 버튼의 넓이 */
+            height: 30px;
+            /* 선택지 버튼의 높이 */
+            line-height: 30px;
+            /* 텍스트를 중앙에 배치 */
+            text-align: center;
+            /* 텍스트 중앙 정렬 */
+            border-radius: 50%;
+            /* 둥근 버튼 */
+            padding: 0;
+            /* 추가 여백 없음 */
+            margin-right: 5px;
+            /* 선택지 텍스트와의 간격 */
+            cursor: pointer;
+            box-sizing: border-box;
+            /* 테두리와 내부 여백을 포함한 크기 정의 */
+        }
+
+        /* 버튼에 마우스를 올렸을 때 투명한 원형 실선 유지 */
+        .choice-button:hover {
+            border-color: transparent;
+            /* 여전히 투명 */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 13cm;
+            /* 가로 13cm */
+            height: 7cm;
+            /* 세로 7cm */
+            border-radius: 10px;
+            /* 각 모서리 레디우스 10px */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            /* 상단 약한 명암 처리 */
+
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            /* 좌우 정렬 */
+            align-items: center;
+            /* 내용 수직 중앙 정렬 */
+            font-size: 20px;
+            /* 상단 폰트 크기 */
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid lightgray;
+            /* 상단 구분선 */
+            height: 40px;
+            /* 상단의 높이 고정 */
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            /* 확인 버튼 우측 정렬 */
+            border-top: none;
+            /* 보이지 않게 투명 처리 */
+        }
+
+        .modal-body {
+            padding: 6px;
+            font-size: 16px;
+            /* 텍스트 폰트 크기 */
+            line-height: 1.5;
+            /* 줄 간격 설정 */
+        }
+
+
+        button.confirm-button {
+            width: 50px;
+            /* 버튼의 너비 */
+            height: 30px;
+            /* 버튼의 높이 */
+            padding: 3px 3px;
+            /* 내부 여백 조정 */
+            margin: 0;
+            /* 외부 여백 제거 */
+            line-height: normal;
+            /* 텍스트가 중앙에 위치하도록 */
+            border-radius: 10px;
+            /* 모서리 둥글게 */
+            background-color: rgb(161, 160, 160);
+            /* 버튼 배경색 (녹색) */
+            color: white;
+            /* 버튼 글씨색 */
+            font-size: 16px;
+            /* 폰트 크기 */
+            border: none;
+            /* 테두리 제거 */
+            cursor: pointer;
+            /* 커서 모양 변경 */
+        }
+
+        button.confirm-button:hover {
+            background-color: #45a049;
+            /* 마우스 오버 시 버튼 색상 */
+        }
+
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 이전페이지 버튼 */
+        button.previous-button {
+            float: left;
+            /* 우측 정렬 */
+            padding: 5px 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-left: 0;
+            /* 좌측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+
+        /* 다음페이지 버튼 */
+        button.next-button {
+            float: right;
+            /* 우측 정렬 */
+            padding: 5px 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-right: 0;
+            /* 우측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+    </style>
+    <script>
+        function openAnswerModal(isCorrect, modalId) {
+            // 정답 여부 설정
+            const answerText = document.getElementById(modalId).querySelector('#answerText');
+            answerText.textContent = isCorrect ? '정답입니다!' : '오답입니다.';
+
+            // 모달창 열기
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function goToPreviousPage() {
+            window.location.href = 'https://2024mo-test.github.io/cu-part/cu6.html'; // 이전 페이지의 URL
+        }
+
+        function goToNextPage() {
+            window.location.href = 'https://2024mo-test.github.io/cu-part/cu8.html'; // 다음 페이지의 URL
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <!-- 전체 컨테이너 -->
+    <div class="container">
+        <!-- 헤드 영역 -->
+        <div class="header">
+            <div class="left-header">
+                <h1 style="font-size: 28px; font-weight: 600;">문화유산법령 모의고사 </h1> <!-- 수동 입력 -->
+            </div>
+            <div class="right-header">
+                <h3 style="font-size: 22px;">2024년 제1회</h3> <!-- 수동 입력 -->
+            </div>
+        </div>
+        <!-- 문제 영역 -->
+        <div class="problem-area">
+            <!-- 좌측 문제 칸 -->
+            <div class="left-column">
+                <!-- 1번 문제 영역 -->
+                <div class="question">
+                    <p>61. 문화유산법상 국외소재문화유산재단에 관한 설명으로 옳지 않은 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal61')">①</span>
+                            국외소재문화유산재단에 관하여 문화유산법령에 규정한 것 외에는「민법」중 재단법인
+                            에 관한 규정을 준용한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal61')">②</span>
+                            국외소재문화유산재단은 한국담당 학예사의 파견 및 교육훈련 사업을 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal61')">③</span>
+                            국외소재문화유산재단은 외국박물관 한국실 운영 지원 사업을 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal61')">④</span>
+                            국가유산진흥원 산하에 국외소재문화재재단을 설립한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal61" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal61')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제69조의3 제1항 <br> ① 국외소재문화유산의 현황 및 반출 경위 등에 대한
+                                조사ㆍ연구, 국외소재문화유산 환수ㆍ활용과 관련한 각종 전략ㆍ정책 연구 등 국외소재문화유산과 관련한 각종 사업을 종합적ㆍ체계적으로 수행하기 위하여 국가유산청
+                                산하에 국외소재문화유산재단을 설립한다. </p>
+                            <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>62. 문화유산법령상 국외소재문화유산재단의 사업에 속하지 않은 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal62')">①</span> 국가유산
+                            공적개발원조 등 국제교류
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal62' )">②</span>
+                            국외소재문화유산 환수 및 보호에 관한 연구
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal62')">③</span> 외국박물관
+                            한국실 운영 지원
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal62')">④</span> 한국담당
+                            학예사의 파견 및 교육 훈련
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal62" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal62')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제69조의3 제6항 <br> ⑥ 국외문화유산재단은 설립목적을 달성하기 위하여 다음 각
+                                호의 사업을 행한다.
+                            </p>
+                            <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>63. 문화유산법령상 국외소재문화유산재단의 사업에 해당하지 않는 것은? </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal63')">①</span> 외국박물관
+                            한국실 운영 지원
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal63')">②</span> 한국담당
+                            학예사의 파견 및 교육 훈련
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal63')">③</span>
+                            국외소재문화유산재단의 설립목적을 달성하기 위한 수익사업
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal63')">④</span> 국제적
+                            문화교류 목적의 국가민속문화재 반출에 대한 허가
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal63" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal63')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제69조의3 제6항<br> ⑥ 국외문화유산재단은 설립목적을 달성하기 위하여 다음 각 호의
+                                사업을 행한다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 4번 문제 영역 -->
+                <div class="question">
+                    <p>64. 문화유산법령상 시ㆍ도문화유산위원회의 조직과 운영 등에 관한 사항을 조례로 정할 때 포함하여야 할 사항이 아닌 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal64')">①</span> 위원회 운영
+                            예산에 관한 사항
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal64')">②</span> 위원의
+                            위촉과 해촉에 관한 사항
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal64')">③</span>
+                            분과위원회의 설치와 운영에 관한 사항
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal64')">④</span> 문화유산의
+                            보존ㆍ관리 및 활용과 관련된 조사ㆍ심의에 관한 사항
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal64" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal64')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제71조 제2항 <br> ② 시ㆍ도문화유산위원회의 조직과 운영 등에 관한 사항은 조례로
+                                정하되, 다음 각 호의 사항을 포함하여야 한다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!--번 문제 영역 -->
+                <div class="question">
+                    <p>65. 문화유산법령상 문화유산매매업허가를 받기 위한 자격을 갖추지 못한 자는?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal65')">①</span> 박물관 및
+                            미술관진흥법」에 따라 등록된 미술관에서 2년간 문화재를 취급한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal65')">②</span>
+                            문화유산매매업자에게 고용되어 2년간 문화재를 취급한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal65')">③</span> 대학원에서
+                            2년간 전통공예학 계통의 학문을 전공한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal65')">④</span>
+                            전문대학에서 2년간 역사학 계통의 학문을 전공한 자
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal65" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal65')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제76조 제1항 제4호 <br> 4. 문화유산매매업자에게 고용되어 3년 이상 문화유산을
+                                취급한 사람
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 우측 문제 칸 -->
+            <div class="right-column">
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>66. 문화유산법령상 문화유산매매업자의 결격사유에 해당하지 않는 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal66')">①</span> 피한정후견인
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal66')">②</span>
+                            문화유산매매업 허가가 취소된 날로부터 3년이 지나지 아니한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal66')">③</span> 형법의
+                            장물 취득 등 죄를 범하여 금고 3년의 실형을 선고받고 그 집행이 끝난 후 3년이 지나지 아니한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal66')">④</span>
+                            문화유산법령을 위반하여 금고 이상의 실형을 선고받고 그 집행이 끝나거나 집행을
+                            받지 아니하기로 확정된 후 3년이 지나지 아니한 자
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal66" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal66')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제77조 제1호 <br> 1. 삭제 2020. 12. 8.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>67. 문화유산법령상 문화유산매매업의 허가에 관한 설명으로 옳지 않은 것은? </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal67')">①</span> 동산에
+                            속하는 유형문화유산이나 유형의 민속문화재유산으로서 제작된 지 50년 이상된 것의 매매 또는 교환하는 것을 업(業)으로 하려는 자는 문화유산매매업 허가를 받아야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal67')">②</span>
+                            문화재매매업의 허가권자는 특별자치시장, 특별자치도지사, 시장ㆍ군수 또는 구청장이다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal67')">③</span> 허가를
+                            받은 자는 문화체육관광부령으로 정하는 바에 따라 허가권자에게 문화유산의 보존 상황, 매매 또는 교환의 실태를 신고하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal67')">④</span> 허가를 받은
+                            자는 문화유산매매업을 폐업하면 지체없이 폐업신고서를 허가권자에게 제출하여야 한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal67" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal67')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제79조<br> 제75조제1항에 따라 허가를 받은 자는 문화유산매매업을 폐업하면 3개월
+                                이내에 문화체육관광부령으로 정하는 바에 따라 폐업신고서를 특별자치시장, 특별자치도지사, 시장ㆍ군수 또는 구청장에게 제출하여야 한다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>68. 문화유산법령상 문화유산매매업에 관한 설명으로 옳은 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal68')">①</span> 위탁을
+                            받아 유형의 민속문화유산을 매매하는 것을 업으로 하려는 자는 특별자치시장,
+                            특별자치도지사, 시장ㆍ군수 또는 구청장에게 문화재매매업 신고를 하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal68')">②</span>
+                            문화유산매매업자로서의 지위를 승계받은 자는 승계받은 날부터 1개월 이내에 특별자치
+                            시장, 특별자치도지사, 시장ㆍ군수 또는 구청장에게 신고하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal68')">③</span>
+                            문화유산매매업 허가를 받은 자가 문화유산매매업을 폐업한 경우 1개월 이내에 폐업신고
+                            서를 제출하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal68')">④</span> 영업정지
+                            기간 중에 영업을 하여 허가가 취소되었으나, 허가가 취소된 날부터 3년이
+                            지난 경우는 문화유산매매업자가 될 수 있다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal68" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal68')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제77조 제3호 <br> 3. 제80조에 따라 허가가 취소된 날부터 3년이 지나지 아니한
+                                자
+                                ;참조: 시행령 제52조의3(문화유산매매업의 지위승계 신고) ① 문화유산매매업의 지위승계 신고를 하려는 자는 승계받은 날부터 20일 이내에 문화유산매매업
+                                지위승계 신고서를 특별자치시장, 특별자치도지사, 시장ㆍ군수ㆍ구청장에게 제출해야 한다
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>69. 문화유산법령상 문화유산매매업의 허가에 관한 설명으로 옳지 않은 것은? </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal69')">①</span>
+                            문화유산매매업자에게 고용되어 3년 이상 문화재를 취급한 사람은 자격 요건을 충족한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal69')">②</span> 박물관
+                            또는 미술관에서 2년 이상 문화재를 취급한 사람은 자격 요건을 충족한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal69')">③</span>
+                            「문화유산법령」에 따라 허가가 취소된 날부터 5년이 지나지 아니한 자는 문화유산매
+                            매업자가 될 수 없다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal69')">④</span> 허가를
+                            받은 자는 문화유산매매업을 폐업하면 3개월 이내에 폐업신고서를 제출하여야
+                            한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal69" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal69')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제77조 제3호 <br> 3. 제80조에 따라 허가가 취소된 날부터 3년이 지나지 아니한
+                                자
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>70. 문화유산법령상 문화유산매매업자의 행위 중 과태료 부과 대상이 아닌 것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal70')">①</span>
+                            문화유산매매업자가 문화유산의 보존 상황, 매매 또는 교환의 실태를 신고하지 않은 경우
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal70')">②</span>
+                            문화유산매매업자가 해마다 받아야 하는 매매ㆍ교환 등에 관한 장부 검인을 받지 않은 경우
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal70')">③</span>
+                            문화유산매매업자가 허가증을 다른 자에게 빌려주는 경우
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal70')">④</span>
+                            문화유산매매업자가 폐업신고서를 제출하지 않은 경우
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal70" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal70')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제101조의2<br> 제77조의2를 위반하여 다른 자에게 자기의 명의 또는 상호를
+                                사용하여 문화유산매매업을 하게 하거나 그 허가증을 다른 자에게 빌려 준 자는 1년 이하의 징역이나 1천만원 이하의 벌금에 처한다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 시험지 외곽 경계선 바깥의 버튼 영역 -->
+        <div class="navigation">
+            <button class="previous-button" onclick="goToPreviousPage()">이전페이지</button>
+            <button class="next-button" onclick="goToNextPage()">다음페이지</button>
+        </div>
+    </div>
+</body>
+
+</html>

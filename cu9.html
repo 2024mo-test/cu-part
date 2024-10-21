@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국가유산기본법령 모의고사</title>
+    <!-- 구글 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 부트스트랩 CSS 추가 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 부트스트랩 JS 및 제이쿼리 추가 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        * {
+            font-family: "Gowun Dodum", sans-serif;
+            color: black;
+        }
+
+        /* 페이지 전체 중앙 정렬 및 80% 너비 설정 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+            /* 상단 간격 추가 */
+        }
+
+        /* 전체 컨테이너 */
+        .container {
+            width: 80%;
+            box-sizing: border-box;
+
+            /* 외곽 경계선 */
+            padding: 20px;
+            position: relative;
+            /* 문제지 박스를 기준으로 배치 */
+        }
+
+        /* 페이지 하단의 이전/다음 버튼 */
+        .footer {
+            position: absolute;
+            bottom: -60px;
+            /* 문제지 박스 외곽 경계선 아래에 위치 */
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            /* 버튼과 좌우 화면 끝 사이 간격 */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            width: auto;
+            /* 버튼의 너비가 경계선을 넘지 않게 자동으로 조정 */
+        }
+
+        /* 헤드 영역 */
+        .header {
+            width: 100%;
+            height: 80px;
+            border: 2px solid black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: rgba(220, 220, 220, 0.5);
+            /* 약한 회색 배경 */
+
+        }
+
+        .left-header {
+            padding-left: 30px;
+            /* 좌측 텍스트를 안으로 넣음 */
+        }
+
+        .right-header {
+            padding-right: 30px;
+            /* 우측 텍스트를 안으로 넣음 */
+        }
+
+
+        /* 문제 영역 */
+        .problem-area {
+            width: 100%;
+            border: 1px solid black;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* 좌우 문제 칸 */
+        .left-column,
+        .right-column {
+            width: 48%;
+            box-sizing: border-box;
+        }
+
+        /* 중앙 구분선 - 문제 영역에만 한정 */
+        .problem-area::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: black;
+        }
+
+        /* 문제 영역에 임시 배경 컬러 추가 */
+        .question {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: transparent;
+            /* 문제 내부는 흰색으로 강조 */
+
+            box-sizing: border-box;
+        }
+
+        /* 질문 텍스트 줄바꿈 설정 */
+        .question p {
+            margin: 10;
+            text-indent: -1em;
+            /* 질문 번호 바로 아래에서 시작되지 않도록 */
+            padding-left: 1em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+        }
+
+        /* 선택지 텍스트 줄바꿈 설정 */
+        .choices .choice {
+            text-indent: -1.5em;
+            /* 선택지 번호 바로 아래에서 줄이 시작되지 않도록 */
+            padding-left: 1.5em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+            margin-bottom: 5px;
+        }
+
+        /* 선택지 버튼 활성화 */
+        .choice-button {
+            width: 30px;
+            /* 선택지 버튼의 넓이 */
+            height: 30px;
+            /* 선택지 버튼의 높이 */
+            line-height: 30px;
+            /* 텍스트를 중앙에 배치 */
+            text-align: center;
+            /* 텍스트 중앙 정렬 */
+            border-radius: 50%;
+            /* 둥근 버튼 */
+            padding: 0;
+            /* 추가 여백 없음 */
+            margin-right: 5px;
+            /* 선택지 텍스트와의 간격 */
+            cursor: pointer;
+            box-sizing: border-box;
+            /* 테두리와 내부 여백을 포함한 크기 정의 */
+        }
+
+        /* 버튼에 마우스를 올렸을 때 투명한 원형 실선 유지 */
+        .choice-button:hover {
+            border-color: transparent;
+            /* 여전히 투명 */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 13cm;
+            /* 가로 13cm */
+            height: 7cm;
+            /* 세로 7cm */
+            border-radius: 10px;
+            /* 각 모서리 레디우스 10px */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            /* 상단 약한 명암 처리 */
+
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            /* 좌우 정렬 */
+            align-items: center;
+            /* 내용 수직 중앙 정렬 */
+            font-size: 20px;
+            /* 상단 폰트 크기 */
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid lightgray;
+            /* 상단 구분선 */
+            height: 40px;
+            /* 상단의 높이 고정 */
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            /* 확인 버튼 우측 정렬 */
+            border-top: none;
+            /* 보이지 않게 투명 처리 */
+        }
+
+        .modal-body {
+            padding: 6px;
+            font-size: 16px;
+            /* 텍스트 폰트 크기 */
+            line-height: 1.5;
+            /* 줄 간격 설정 */
+        }
+
+
+        button.confirm-button {
+            width: 50px;
+            /* 버튼의 너비 */
+            height: 30px;
+            /* 버튼의 높이 */
+            padding: 3px 3px;
+            /* 내부 여백 조정 */
+            margin: 0;
+            /* 외부 여백 제거 */
+            line-height: normal;
+            /* 텍스트가 중앙에 위치하도록 */
+            border-radius: 10px;
+            /* 모서리 둥글게 */
+            background-color: rgb(161, 160, 160);
+            /* 버튼 배경색 (녹색) */
+            color: white;
+            /* 버튼 글씨색 */
+            font-size: 16px;
+            /* 폰트 크기 */
+            border: none;
+            /* 테두리 제거 */
+            cursor: pointer;
+            /* 커서 모양 변경 */
+        }
+
+        button.confirm-button:hover {
+            background-color: #45a049;
+            /* 마우스 오버 시 버튼 색상 */
+        }
+
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 이전페이지 버튼 */
+        button.previous-button {
+            float: left;
+            /* 우측 정렬 */
+            padding: 5px 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-left: 0;
+            /* 좌측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+
+        /* 다음페이지 버튼 */
+        button.next-button {
+            float: right;
+            /* 우측 정렬 */
+            padding: 5px 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-right: 0;
+            /* 우측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+    </style>
+    <script>
+        function openAnswerModal(isCorrect, modalId) {
+            // 정답 여부 설정
+            const answerText = document.getElementById(modalId).querySelector('#answerText');
+            answerText.textContent = isCorrect ? '정답입니다!' : '오답입니다.';
+
+            // 모달창 열기
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function goToPreviousPage() {
+            window.location.href = 'https://2024mo-test.github.io/cu-part/cu7.html'; // 이전 페이지의 URL
+        }
+
+        function goToNextPage() {
+            window.location.href = 'https://blog.naver.com/lhj5268'; // 다음 페이지의 URL
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <!-- 전체 컨테이너 -->
+    <div class="container">
+        <!-- 헤드 영역 -->
+        <div class="header">
+            <div class="left-header">
+                <h1 style="font-size: 28px; font-weight: 600;">문화유산법령 모의고사 </h1> <!-- 수동 입력 -->
+            </div>
+            <div class="right-header">
+                <h3 style="font-size: 22px;">2024년 제1회</h3> <!-- 수동 입력 -->
+            </div>
+        </div>
+        <!-- 문제 영역 -->
+        <div class="problem-area">
+            <!-- 좌측 문제 칸 -->
+            <div class="left-column">
+                <!-- 1번 문제 영역 -->
+                <div class="question">
+                    <p>81. 문화유산법령상 단체나 다중의 위력을 보이거나 위험한 물건을 몸에 지녀서 죄를 범할 경우, 각 해당 조에서 정한 형의 2분의 1까지 그 형이 가중되는 죄에 해당하지 않는
+                        것은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal81')">①</span>
+                            일반동산문화유산인 것을 알고 그 문화유산을 손상, 절취 또는 은닉한 행위
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal81')">②</span> 거짓 또는
+                            부정한 방법으로 지정문화유산 또는 임시지정문화유산으로 지정하게 한 행위
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal81')">③</span>
+                            지정문화유산의 보호구역에 대하여 방화, 일수 또는 파괴한 행위
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal81')">④</span>
+                            국가유산청장의 허가없이 국보를 국외로 수출한 행위
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal81" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal81')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제94조 <br> 다음 각 호의 건조물에 대하여 방화, 일수(溢水) 또는 파괴의 죄를
+                                저지른 자는 「형법」각 해당 조에서 정한 형의 2분의 1까지 가중한다.
+                                1. 지정문화유산이나 임시지정문화유산인 건조물
+                                2. 지정문화유산이나 임시지정문화유산을 보호하기 위한 건조물 </p>
+                            <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>82. 문화유산법령상 과태료의 부과 대상이 되는 자는?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal82')">①</span>
+                            문화유산매매업의 허가를 받은 자가 문화유산의 보존 상황, 매매 또는 교환의 실태를 신고 하지 아니한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal82' )">②</span>
+                            국가지정문화유산을 손상, 절취 또는 은닉하거나 그 밖의 방법으로 그 효용을 해한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal82')">③</span> 거짓의
+                            신고 또는 보고를 하여 관리권자의 관리행위를 방해한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal82')">④</span>
+                            문화유산매매업 허가를 받지 아니하고 영업행위를 한 자
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal82" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal82')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ;문화유산의 보존 및 활용에 관한 법률 제103조 제4항 제4호 <br> 4. 제75조제2항에 따른 신고를 하지 아니한 자
+                            </p>
+                            <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 우측 문제 칸 -->
+            <div class="right-column">
+                <!-- 번 문제 영역 -->
+                <div class="question">
+                    <p>83. 문화유산법령상 과태료의 부과 대상은?
+                    </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button"
+                                onclick="openAnswerModal(false, 'answerModal83')">①</span>국가유산청장의 공개 제한을 위반하여 허가를 받지
+                            아니하고 제한 지역을 출입한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal83')">②</span>
+                            국가지정문화유산의 정기조사에 따른 협조를 거부하거나 필요한 행위를 방해한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal83')">③</span> 거짓의
+                            신고 또는 보고를 하여 관리권자의 관리행위를 방해한 자
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal83')">④</span> 금연구역과
+                            흡연구역을 알리는 표지 설치 의무를 위반하여 시.도지사가 명한 시정명령을 따르지 아니한 자.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal83" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal83')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 문화유산의 보존 및 활용에 관한 법률 제103조 제1항 제1호 <br> 1. 제14조의4제3항에 따른 시정명령을 따르지 아니한
+                                자
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 시험지 외곽 경계선 바깥의 버튼 영역 -->
+        <div class="navigation">
+            <button class="previous-button" onclick="goToPreviousPage()">이전페이지</button>
+            <button class="next-button" onclick="goToNextPage()">홈 페이지</button>
+        </div>
+    </div>
+</body>
+
+</html>
